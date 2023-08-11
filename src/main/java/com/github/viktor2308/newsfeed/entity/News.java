@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -18,6 +16,7 @@ import java.util.Set;
 @Table(name = "news")
 public class News {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long newsId;
     private String title;
     private String text;
