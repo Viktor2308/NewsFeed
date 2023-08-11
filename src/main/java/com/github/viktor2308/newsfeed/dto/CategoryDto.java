@@ -10,11 +10,7 @@ import org.hibernate.validator.constraints.Length;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateNewsDto {
-    @NotBlank
-    private String title;
-    @NotBlank
-    private String text;
+public class CategoryDto {
     @NotBlank
     @Pattern(regexp = "^[\\p{L} .'-]+$", message = "Name must contain only letters a-z and A-Z")
     @Length(min = 2, max = 15, message = "Breed length must be from 2 to 15")
