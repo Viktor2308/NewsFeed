@@ -6,8 +6,11 @@ import com.github.viktor2308.newsfeed.dto.NewsDto;
 import com.github.viktor2308.newsfeed.dto.UpdateNewsDto;
 import com.github.viktor2308.newsfeed.service.NewsService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +29,6 @@ public class NewsController {
         return newsService.getAllNews();
     }
 
-
     @PostMapping("/news")
     public NewsDto createNews(@RequestBody @Valid CreateNewsDto newsDto) {
         log.info("Request create new News: {},{}", newsDto.getTitle(), newsDto.getText());
@@ -42,5 +44,13 @@ public class NewsController {
     public NewsDto updateNewsCategory(@PathVariable long id, @RequestBody @Valid CategoryDto category){
         log.info("Request update news category with id: {}, to category: {}", id, category);
         return newsService.updateNewsCategory(id, category);
+    }
+
+    @DeleteMapping("/news/{id}")
+    public ResponseEntity<?> deleteNews(@PathVariable @NotBlank long id){
+        log.info("Request delete news with id: {}", id);
+        return newsService.deleteNews(id)
+                ? ResponseEntity.status(HttpStatus.OK).build()
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

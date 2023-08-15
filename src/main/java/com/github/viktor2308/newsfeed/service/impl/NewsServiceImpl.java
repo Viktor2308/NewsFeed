@@ -26,14 +26,13 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public List<NewsDto> getAllNews() {
-        return repository.findAll().stream()
+        return repository.findAllByOrderByNewsIdDesc().stream()
                 .map(NewsMapper.INSTANCE::newsToNewsDto)
                 .toList();
     }
 
     @Override
     public NewsDto createNews(CreateNewsDto newsDto) {
-
         News news = repository.save(News.builder()
                 .title(newsDto.getTitle())
                 .text(newsDto.getText())
@@ -58,5 +57,10 @@ public class NewsServiceImpl implements NewsService {
         Category category = categoryService.getCategoryByName(newCategory.getCategory());
         news.setCategory(category);
         return NewsMapper.INSTANCE.newsToNewsDto(repository.save(news));
+    }
+
+    @Override
+    public boolean deleteNews(long id) {
+        return repository.deleteByNewsId(id);
     }
 }
