@@ -1,17 +1,16 @@
 package com.github.viktor2308.newsfeed.service.impl;
 
-import com.github.viktor2308.newsfeed.dto.CategoryDto;
-import com.github.viktor2308.newsfeed.dto.CreateNewsDto;
-import com.github.viktor2308.newsfeed.dto.NewsDto;
-import com.github.viktor2308.newsfeed.dto.UpdateNewsDto;
+import com.github.viktor2308.newsfeed.dto.*;
 import com.github.viktor2308.newsfeed.entity.Category;
 import com.github.viktor2308.newsfeed.entity.News;
 import com.github.viktor2308.newsfeed.exception.NewsNotfoundException;
 import com.github.viktor2308.newsfeed.mapper.NewsMapper;
 import com.github.viktor2308.newsfeed.repository.NewsRepository;
+import com.github.viktor2308.newsfeed.repository.NewsSpecification;
 import com.github.viktor2308.newsfeed.service.CategoryService;
 import com.github.viktor2308.newsfeed.service.NewsService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,7 +26,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public List<NewsDto> getAllNews() {
         return repository.findAllByOrderByNewsIdDesc().stream()
-                .map(NewsMapper.INSTANCE::newsToNewsDto)
+                .map(NewsMapper.INSTANCE::toNewsDto)
                 .toList();
     }
 
@@ -39,7 +38,7 @@ public class NewsServiceImpl implements NewsService {
                 .category(categoryService.getCategoryByName(newsDto.getCategory()))
                 .created(LocalDateTime.now())
                 .build());
-        return NewsMapper.INSTANCE.newsToNewsDto(news);
+        return NewsMapper.INSTANCE.toNewsDto(news);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class NewsServiceImpl implements NewsService {
         News news = repository.findById(id).orElseThrow(() ->
                 new NewsNotfoundException("News with id " + id + " not found."));
         NewsMapper.INSTANCE.patch(news,updateNewsDto);
-        return NewsMapper.INSTANCE.newsToNewsDto(repository.save(news));
+        return NewsMapper.INSTANCE.toNewsDto(repository.save(news));
     }
 
     @Override
@@ -56,11 +55,30 @@ public class NewsServiceImpl implements NewsService {
                 new NewsNotfoundException("News with id " + id + " not found."));
         Category category = categoryService.getCategoryByName(newCategory.getCategory());
         news.setCategory(category);
-        return NewsMapper.INSTANCE.newsToNewsDto(repository.save(news));
+        return NewsMapper.INSTANCE.toNewsDto(repository.save(news));
     }
 
     @Override
     public boolean deleteNews(long id) {
         return repository.deleteByNewsId(id);
+    }
+
+    @Override
+    public List<NewsDto> searchNews(SearchDto searchDto) {
+        Specification<News> spec = Specification.where(null);
+        if(searchDto.getTitle()!=null){
+            spec.and(NewsSpecification.likeSearchedTitle(searchDto.getTitle()));
+        }
+        if(searchDto.getText()!=null){
+            spec.and(NewsSpecification.likeSearchedText(searchDto.getText()));
+        }
+        if(searchDto.getCategory()!=null){
+            spec.and(NewsSpecification.likeSearchedCategory(searchDto.getCategory()));
+        }
+        List<News> newsList = repository.findAll(spec);
+
+        return newsList.stream()
+                .map(NewsMapper.INSTANCE::toNewsDto)
+                .toList();
     }
 }

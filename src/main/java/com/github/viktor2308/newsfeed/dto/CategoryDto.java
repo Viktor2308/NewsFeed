@@ -12,7 +12,6 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 public class CategoryDto {
     @NotBlank
-    @Pattern(regexp = "^[\\p{L} .'-]+$", message = "Name must contain only letters a-z and A-Z")
-    @Length(min = 2, max = 15, message = "Breed length must be from 2 to 15")
+    @Length(min = 2, max = 15)
     private String category;
 }

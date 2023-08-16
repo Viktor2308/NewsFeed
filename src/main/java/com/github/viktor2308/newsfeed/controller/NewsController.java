@@ -1,9 +1,6 @@
 package com.github.viktor2308.newsfeed.controller;
 
-import com.github.viktor2308.newsfeed.dto.CategoryDto;
-import com.github.viktor2308.newsfeed.dto.CreateNewsDto;
-import com.github.viktor2308.newsfeed.dto.NewsDto;
-import com.github.viktor2308.newsfeed.dto.UpdateNewsDto;
+import com.github.viktor2308.newsfeed.dto.*;
 import com.github.viktor2308.newsfeed.service.NewsService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -53,4 +50,11 @@ public class NewsController {
                 ? ResponseEntity.status(HttpStatus.OK).build()
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+
+    @GetMapping("/news/search")
+    public List<NewsDto> searchNews(SearchDto searchDto) {
+        log.info("Request for search news");
+        return newsService.searchNews(searchDto);
+    }
+
 }

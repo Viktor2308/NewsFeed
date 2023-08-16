@@ -15,7 +15,8 @@ import java.time.format.DateTimeFormatter;
 public interface NewsMapper {
 
     NewsMapper INSTANCE = Mappers.getMapper(NewsMapper.class);
-    NewsDto newsToNewsDto(News news);
+    NewsDto toNewsDto(News news);
+
 
     void patch(@MappingTarget News target, UpdateNewsDto source);
 
