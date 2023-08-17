@@ -45,7 +45,7 @@ public class NewsServiceImpl implements NewsService {
     public NewsDto updateNews(long id, UpdateNewsDto updateNewsDto) {
         News news = repository.findById(id).orElseThrow(() ->
                 new NewsNotfoundException("News with id " + id + " not found."));
-        NewsMapper.INSTANCE.patch(news,updateNewsDto);
+        NewsMapper.INSTANCE.patch(news, updateNewsDto);
         return NewsMapper.INSTANCE.toNewsDto(repository.save(news));
     }
 
@@ -66,14 +66,14 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public List<NewsDto> searchNews(SearchDto searchDto) {
         Specification<News> spec = Specification.where(null);
-        if(searchDto.getTitle()!=null){
-            spec.and(NewsSpecification.likeSearchedTitle(searchDto.getTitle()));
+        if (searchDto.getTitle() != null) {
+            spec = spec.and(NewsSpecification.likeSearchedTitle(searchDto.getTitle()));
         }
-        if(searchDto.getText()!=null){
-            spec.and(NewsSpecification.likeSearchedText(searchDto.getText()));
+        if (searchDto.getText() != null) {
+            spec = spec.and(NewsSpecification.likeSearchedText(searchDto.getText()));
         }
-        if(searchDto.getCategory()!=null){
-            spec.and(NewsSpecification.likeSearchedCategory(searchDto.getCategory()));
+        if (searchDto.getCategory() != null) {
+            spec = spec.and(NewsSpecification.likeSearchedCategory(searchDto.getCategory()));
         }
         List<News> newsList = repository.findAll(spec);
 
